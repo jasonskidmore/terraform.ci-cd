@@ -145,6 +145,7 @@ jobs:
     - name: Terraform Apply
       if: github.ref == 'refs/heads/${{ inputs.BRANCH }}' && github.event_name == 'push'
       run: |
+        echo ${{ inputs.BRANCH }}
         export TF_WORKSPACE="${{ inputs.TERRAFORM_PROJECT }}-${{ inputs.ENV }}"
         cp variables/${{ inputs.ENV }}.auto.tfvars ./
         terraform apply -auto-approve
