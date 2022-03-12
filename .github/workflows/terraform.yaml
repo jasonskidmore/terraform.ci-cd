@@ -57,11 +57,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-      run: |
-        echo "Where are we and whoami"
-        pwd
-        ls -la
-        whoami
+
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
@@ -93,6 +89,10 @@ jobs:
       id: plan
       if: github.event_name == 'pull_request'
       run: |
+      run: |
+        echo "listing directory"
+        pwd
+        ls -la
         export TF_WORKSPACE="${{ inputs.TERRAFORM_PROJECT }}-${{ inputs.ENV }}"
         cp variables/${{ inputs.ENV }}.auto.tfvars ./
         terraform plan -input=false -no-color
