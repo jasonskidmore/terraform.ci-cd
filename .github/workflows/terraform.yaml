@@ -89,7 +89,6 @@ jobs:
       id: plan
       if: github.event_name == 'pull_request'
       run: |
-      run: |
         echo "listing directory"
         pwd
         ls -la
