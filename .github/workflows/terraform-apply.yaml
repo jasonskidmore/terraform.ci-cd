@@ -39,11 +39,11 @@ jobs:
         # terraform_version: 0.13.0:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-# Applies the configuration. This step will only run when a commit is pushed to BRANCH
-- name: Terraform Apply
-  if: github.ref == 'refs/heads/${{ inputs.BRANCH }}' && github.event_name == 'push'
-  run: |
-    echo ${{ inputs.BRANCH }}
-    export TF_WORKSPACE="${{ inputs.TERRAFORM_PROJECT }}-${{ inputs.ENV }}"
-    cp variables/${{ inputs.ENV }}.auto.tfvars ./
-    terraform apply -auto-approve
+    # Applies the configuration. This step will only run when a commit is pushed to BRANCH
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/${{ inputs.BRANCH }}' && github.event_name == 'push'
+      run: |
+        echo ${{ inputs.BRANCH }}
+        export TF_WORKSPACE="${{ inputs.TERRAFORM_PROJECT }}-${{ inputs.ENV }}"
+        cp variables/${{ inputs.ENV }}.auto.tfvars ./
+        terraform apply -auto-approve
