@@ -57,6 +57,11 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+      run: |
+        echo "Where are we and whoami"
+        pwd
+        ls -la
+        whoami
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
