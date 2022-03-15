@@ -37,8 +37,8 @@ on:
         description: 'The deployment envirnment'
         required: true
         type: string
-      branch:
-        requiried: true
+      branch: ## TODO needed?
+        requiried: false
         type : string
       tf_version:
         description: 'Specifies version of Terraform to use. e.g: 1.1.0 Default=latest.'
@@ -78,7 +78,7 @@ jobs:
         if: ${{ inputs.ENABLE_TFSEC == 'true' }}
         uses: tfsec/tfsec-sarif-action@v1.0.2
         with:
-          tfvars-file: './variabes/${{ inputs.ENV }}.auto.tfvars'
+          tfvars-file: './variables/${{ inputs.tf_vars_file }}'
           sarif_file: tfsec.sarif
 
     - name: Upload SARIF file
@@ -123,7 +123,7 @@ jobs:
         ls -la
         export TF_WORKSPACE="${{ inputs.terraform_project }}-${{ inputs.env }}"
         cp variables/${{ inputs.tf_vars_file }} ./
-        terraform plan -input=false -no-color
+        terraform plan -input=false -no-color --out=plan.tfplan
       continue-on-error: true
 
     # adds a comment to the pull request with the results of the format, init and plan steps
@@ -169,6 +169,16 @@ jobs:
     - name: Terraform Plan Status
       if: steps.plan.outcome == 'failure'
       run: exit 1
+
+    - name: Compress TF Plan artifact
+        run: zip -r ${{ inputs.terraform_project }}-${{ inputs.env }}.zip ./*
+
+    - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: "${{ inputs.terraform_project }}-${{ inputs.env }}"
+          path: ./"${{ inputs.terraform_project }}-${{ inputs.env }}.zip"
+          retention-days: 2
 
 
 # TODO The below did not work in reusable workflow. On Pull request TF Apply would run.
