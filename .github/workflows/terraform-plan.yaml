@@ -138,7 +138,7 @@ jobs:
       if: steps.plan.outcome == 'failure'
       run: exit 1
 
-      
+
 # TODO The below did not work in reusable workflow. On Pull request TF Apply would run.
 
     # # Applies the configuration. This step will only run when a commit is pushed to BRANCH
