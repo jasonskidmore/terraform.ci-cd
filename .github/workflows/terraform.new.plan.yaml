@@ -171,14 +171,14 @@ jobs:
       run: exit 1
 
     - name: Compress TF Plan artifact
-        run: zip -r ${{ inputs.terraform_project }}-${{ inputs.env }}.zip ./*
+      run: zip -r ${{ inputs.terraform_project }}-${{ inputs.env }}.zip ./*
 
     - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: "${{ inputs.terraform_project }}-${{ inputs.env }}"
-          path: ./"${{ inputs.terraform_project }}-${{ inputs.env }}.zip"
-          retention-days: 2
+      uses: actions/upload-artifact@v2
+      with:
+        name: "${{ inputs.terraform_project }}-${{ inputs.env }}"
+        path: ./"${{ inputs.terraform_project }}-${{ inputs.env }}.zip"
+        retention-days: 2
 
 
 # TODO The below did not work in reusable workflow. On Pull request TF Apply would run.
