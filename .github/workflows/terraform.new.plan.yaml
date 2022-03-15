@@ -76,7 +76,6 @@ jobs:
       uses: actions/checkout@v2
 
     - name: List directory
-      id: List Dir
       run: |
         echo "listing directory"
         pwd
