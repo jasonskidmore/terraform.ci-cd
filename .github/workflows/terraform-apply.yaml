@@ -2,19 +2,27 @@ name: Terraform Apply
 
 on:
   workflow_call:
-    inputs:
-      TERRAFORM_PROJECT:
-        type: string
-        required: true
-      ENV:
-        type: string
-        required: true
-      BRANCH:
-        type: string
-        required: true
-    secrets:
-      TF_API_TOKEN:
-        required: true
+  terraform_project:
+    description: 'The TF workspace prefix/tag'
+    required: true
+    type: string
+  env:
+    description: 'The deployment envirnment'
+    required: true
+    type: string
+  tf_version:
+    description: 'Specifies version of Terraform to use. e.g: 1.1.0 Default=latest.'
+    required: false
+    type: string
+    default: latest
+  tf_vars_file:
+    description: 'Specifies the Terraform TFVARS file.'
+    required: true
+    type: string
+
+secrets:
+  TF_API_TOKEN:
+    required: true
 
 jobs:
   terraform:
@@ -36,22 +44,22 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
       with:
-        # terraform_version: 0.13.0:
+        terraform_version: ${{ inputs.tf_version }}
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       id: init
       run: |
-        export TF_WORKSPACE="${{ inputs.TERRAFORM_PROJECT }}-${{ inputs.ENV }}"
+        export TF_WORKSPACE="${{ inputs.terraform_project }}-${{ inputs.env }}"
         terraform init -input=false
         terraform workspace show
 
     # Applies the configuration. This step will only run when a commit is pushed to BRANCH
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/${{ inputs.BRANCH }}' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/${{ inputs.branch }}' && github.event_name == 'push'
       run: |
         echo ${{ inputs.BRANCH }}
-        export TF_WORKSPACE="${{ inputs.TERRAFORM_PROJECT }}-${{ inputs.ENV }}"
-        cp variables/${{ inputs.ENV }}.auto.tfvars ./
+        export TF_WORKSPACE="${{ inputs.terraform_project }}-${{ inputs.env }}"
+        cp variables/${{ inputs.tf_vars_file }} ./
         terraform apply -auto-approve
