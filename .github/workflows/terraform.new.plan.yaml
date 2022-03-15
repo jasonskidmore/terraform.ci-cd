@@ -72,11 +72,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: List directory
-      run: |
-        echo "listing directory"
-        pwd
-        ls -la
 
     # static code analysis tool TFSEC
     - name: Scan IaC - tfsec
@@ -127,6 +122,8 @@ jobs:
       run: |
         export TF_WORKSPACE="${{ inputs.terraform_project }}-${{ inputs.env }}"
         cp variables/${{ inputs.tf_vars_file }} ./
+        echo "listing files"
+        ls -la
         terraform plan -input=false -no-color
       continue-on-error: true
 

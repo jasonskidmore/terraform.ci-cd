@@ -7,7 +7,11 @@ on:
     required: true
     type: string
   env:
-    description: 'The deployment envirnment'
+    description: 'The deployment environment'
+    required: true
+    type: string
+  branch:
+    description: 'The git branch'
     required: true
     type: string
   tf_version:
@@ -59,7 +63,7 @@ jobs:
     - name: Terraform Apply
       if: github.ref == 'refs/heads/${{ inputs.branch }}' && github.event_name == 'push'
       run: |
-        echo ${{ inputs.BRANCH }}
+        echo ${{ inputs.branch }}
         export TF_WORKSPACE="${{ inputs.terraform_project }}-${{ inputs.env }}"
         cp variables/${{ inputs.tf_vars_file }} ./
         terraform apply -auto-approve
