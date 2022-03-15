@@ -75,13 +75,21 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: List directory
+      id: List Dir
+      run: |
+        echo "listing directory"
+        pwd
+        ls -la
+
     # static code analysis tool TFSEC
     - name: Scan IaC - tfsec
       # if: ${{ inputs.enable_TFSEC == 'true' }}
       uses: tfsec/tfsec-sarif-action@v0.0.6
       with:
-        tfvars-file: './variables/${{ inputs.tf_vars_file }}'
         sarif_file: tfsec.sarif
+        tfvars_file: './variables/${{ inputs.tf_vars_file }}'
+
 
     # Uploads results to GitHub Security
     - name: Upload SARIF file
@@ -121,9 +129,6 @@ jobs:
       id: plan
       if: github.event_name == 'pull_request'
       run: |
-        echo "listing directory"
-        pwd
-        ls -la
         export TF_WORKSPACE="${{ inputs.terraform_project }}-${{ inputs.env }}"
         cp variables/${{ inputs.tf_vars_file }} ./
         terraform plan -input=false -no-color
