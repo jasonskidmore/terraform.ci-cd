@@ -74,13 +74,15 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    # static code analysis tool TFSEC
     - name: Scan IaC - tfsec
       if: ${{ inputs.enable_TFSEC == 'true' }}
-      uses: tfsec/tfsec-sarif-action@v1.0.2
+      uses: tfsec/tfsec-sarif-action@v0.0.6
       with:
         tfvars-file: './variables/${{ inputs.tf_vars_file }}'
         sarif_file: tfsec.sarif
 
+    # Uploads results to GitHub Security
     - name: Upload SARIF file
       if: ${{ inputs.enable_TFSEC == 'true' }}
       uses: github/codeql-action/upload-sarif@v1
