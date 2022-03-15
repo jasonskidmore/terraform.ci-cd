@@ -53,6 +53,7 @@ on:
         description: '(Optional) Enables TFSEC IaC scans and code quality checks on Terraform configurations'
         required: false
         type: boolean
+        default: false
 
     secrets:
       TF_API_TOKEN:
@@ -76,7 +77,7 @@ jobs:
 
     # static code analysis tool TFSEC
     - name: Scan IaC - tfsec
-      if: ${{ inputs.enable_TFSEC == 'true' }}
+      # if: ${{ inputs.enable_TFSEC == 'true' }}
       uses: tfsec/tfsec-sarif-action@v0.0.6
       with:
         tfvars-file: './variables/${{ inputs.tf_vars_file }}'
@@ -84,7 +85,7 @@ jobs:
 
     # Uploads results to GitHub Security
     - name: Upload SARIF file
-      if: ${{ inputs.enable_TFSEC == 'true' }}
+      # if: ${{ inputs.enable_TFSEC == 'true' }}
       uses: github/codeql-action/upload-sarif@v1
       with:
         sarif_file: tfsec.sarif
