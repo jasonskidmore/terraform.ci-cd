@@ -29,20 +29,39 @@ name: Terraform Plan
 on:
   workflow_call:
     inputs:
-      TERRAFORM_PROJECT:
-        type: string
+      terraform_project:
+        description: 'The TF workspace prefix/tag'
         required: true
-      ENV:
         type: string
+      env:
+        description: 'The deployment envirnment'
         required: true
+        type: string
+      branch:
+        requiried: true
+        type : string
+      tf_version:
+        description: 'Specifies version of Terraform to use. e.g: 1.1.0 Default=latest.'
+        required: false
+        type: string
+        default: latest
+      tf_vars_file:
+        description: 'Specifies the Terraform TFVARS file.'
+        required: true
+        type: string
+      enable_TFSEC:
+        description: '(Optional) Enables TFSEC IaC scans and code quality checks on Terraform configurations'
+        required: false
+        type: boolean
+        default: false
     secrets:
       TF_API_TOKEN:
         required: true
 
 
 jobs:
-  terraform:
-    name: "Deploy"
+  build-plan:
+    name: "Terraform Build Plan"
     runs-on: ubuntu-latest
 
      # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -55,12 +74,25 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Scan IaC - tfsec
+        if: ${{ inputs.ENABLE_TFSEC == 'true' }}
+        uses: tfsec/tfsec-sarif-action@v1.0.2
+        with:
+          tfvars-file: './variabes/${{ inputs.ENV }}.auto.tfvars'
+          sarif_file: tfsec.sarif
+
+    - name: Upload SARIF file
+        if: ${{ inputs.ENABLE_TFSEC == 'true' }}
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: tfsec.sarif
+
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
       with:
-        # terraform_version: 0.13.0:
+        terraform_version: ${{ inputs.tf_version }}
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
     # Checks that all Terraform configuration files adhere to a canonical format
@@ -72,7 +104,7 @@ jobs:
     - name: Terraform Init
       id: init
       run: |
-        export TF_WORKSPACE="${{ inputs.TERRAFORM_PROJECT }}-${{ inputs.ENV }}"
+        export TF_WORKSPACE="${{ inputs.terraform_project }}-${{ inputs.env }}"
         terraform init -input=false
         terraform workspace show
 
@@ -89,8 +121,8 @@ jobs:
         echo "listing directory"
         pwd
         ls -la
-        export TF_WORKSPACE="${{ inputs.TERRAFORM_PROJECT }}-${{ inputs.ENV }}"
-        cp variables/${{ inputs.ENV }}.auto.tfvars ./
+        export TF_WORKSPACE="${{ inputs.terraform_project }}-${{ inputs.env }}"
+        cp variables/${{ inputs.tf_vars_file }} ./
         terraform plan -input=false -no-color
       continue-on-error: true
 
@@ -138,7 +170,7 @@ jobs:
       if: steps.plan.outcome == 'failure'
       run: exit 1
 
-      
+
 # TODO The below did not work in reusable workflow. On Pull request TF Apply would run.
 
     # # Applies the configuration. This step will only run when a commit is pushed to BRANCH
