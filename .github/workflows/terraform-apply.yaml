@@ -2,31 +2,32 @@ name: Terraform Apply
 
 on:
   workflow_call:
-  terraform_project:
-    description: 'The TF workspace prefix/tag'
-    required: true
-    type: string
-  env:
-    description: 'The deployment environment'
-    required: true
-    type: string
-  branch:
-    description: 'The git branch'
-    required: true
-    type: string
-  tf_version:
-    description: 'Specifies version of Terraform to use. e.g: 1.1.0 Default=latest.'
-    required: false
-    type: string
-    default: latest
-  tf_vars_file:
-    description: 'Specifies the Terraform TFVARS file.'
-    required: true
-    type: string
+    inputs:
+      terraform_project:
+        description: 'The TF workspace prefix/tag'
+        required: true
+        type: string
+      env:
+        description: 'The deployment environment'
+        required: true
+        type: string
+      branch:
+        description: 'The git branch'
+        required: true
+        type: string
+      tf_version:
+        description: 'Specifies version of Terraform to use. e.g: 1.1.0 Default=latest.'
+        required: false
+        type: string
+        default: latest
+      tf_vars_file:
+        description: 'Specifies the Terraform TFVARS file.'
+        required: true
+        type: string
 
-secrets:
-  TF_API_TOKEN:
-    required: true
+    secrets:
+      TF_API_TOKEN:
+        required: true
 
 jobs:
   terraform:
