@@ -30,7 +30,7 @@ on:
         required: true
 
 jobs:
-  terraform:
+  terraform-apply:
     name: "Deploy"
     runs-on: ubuntu-latest
 
