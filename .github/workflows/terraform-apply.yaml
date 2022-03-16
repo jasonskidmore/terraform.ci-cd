@@ -44,6 +44,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+     # Echo input parameters
+    - name: Input Parameters
+      run: |
+        echo "parameters: terraform_project=${{ inputs.terraform_project }} env=${{ inputs.env}} tf_version=${{ inputs.tf_version }} tf_vars_file=${{ inputs.tf_vars_file }} enable_TFSEC=${{ inputs.enable_TFSEC }}"
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
@@ -67,4 +71,6 @@ jobs:
         echo ${{ inputs.branch }}
         export TF_WORKSPACE="${{ inputs.terraform_project }}-${{ inputs.env }}"
         cp variables/${{ inputs.tf_vars_file }} ./
+        echo "listing files"
+        ls -la
         terraform apply -auto-approve
