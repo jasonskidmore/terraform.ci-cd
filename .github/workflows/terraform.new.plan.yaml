@@ -72,9 +72,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    -name: parameters
-     run: |
-       echo "parameters- Enable TFSEC=${{ inputs.enable_TFSEC }}"
+    - name: parameters
+      run: |
+        echo "parameters- Enable TFSEC=${{ inputs.enable_TFSEC }}"
 
 
 
