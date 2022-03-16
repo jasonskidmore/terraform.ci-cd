@@ -77,8 +77,6 @@ jobs:
       run: |
         echo "parameters: terraform_project=${{ inputs.terraform_project }} env=${{ inputs.env}} tf_version=${{ inputs.tf_version }} tf_vars_file=${{ inputs.tf_vars_file }} enable_TFSEC=${{ inputs.enable_TFSEC }}"
 
-
-
     # Static code analysis tool TFSEC
     - name: Scan IaC - tfsec
       if: ${{ inputs.enable_TFSEC == true }}
@@ -176,7 +174,7 @@ jobs:
     - name: Terraform Plan Status
       if: steps.plan.outcome == 'failure'
       run: exit 1
-   # TODO plan outputs not support with tf cloud
+    #  plan outputs not support with tf cloud
     # - name: Compress TF Plan artifact
     #   run: zip -r ${{ inputs.terraform_project }}-${{ inputs.env }}.zip ./*
     #
