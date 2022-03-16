@@ -72,13 +72,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: parameters
+     # Echo input parameters
+    - name: Input Parameters
       run: |
-        echo "parameters- Enable TFSEC=${{ inputs.enable_TFSEC }}"
+        echo "parameters: terraform_project=${{ inputs.terraform_project }} env=${{ inputs.env}} tf_version=${{ inputs.tf_version }} tf_vars_file=${{ inputs.tf_vars_file }} enable_TFSEC=${{ inputs.enable_TFSEC }}"
 
 
 
-    # static code analysis tool TFSEC
+    # Static code analysis tool TFSEC
     - name: Scan IaC - tfsec
       if: ${{ inputs.enable_TFSEC == true }}
       uses: tfsec/tfsec-sarif-action@v0.0.6
@@ -185,15 +186,3 @@ jobs:
     #     name: "${{ inputs.terraform_project }}-${{ inputs.env }}"
     #     path: ./"${{ inputs.terraform_project }}-${{ inputs.env }}.zip"
     #     retention-days: 2
-
-
-# TODO The below did not work in reusable workflow. On Pull request TF Apply would run.
-
-    # # Applies the configuration. This step will only run when a commit is pushed to BRANCH
-    # - name: Terraform Apply
-    #   if: github.ref == 'refs/heads/${{ inputs.BRANCH }}' && github.event_name == 'push'
-    #   run: |
-    #     echo ${{ inputs.BRANCH }}
-    #     export TF_WORKSPACE="${{ inputs.TERRAFORM_PROJECT }}-${{ inputs.ENV }}"
-    #     cp variables/${{ inputs.ENV }}.auto.tfvars ./
-    #     terraform apply -auto-approve
