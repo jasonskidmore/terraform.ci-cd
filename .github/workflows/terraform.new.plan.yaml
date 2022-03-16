@@ -74,7 +74,7 @@ jobs:
 
     -name: parameters
      run: |
-     echo " parameters- Enable TFSEC=${{ inputs.enable_TFSEC }} "
+       echo "parameters- Enable TFSEC=${{ inputs.enable_TFSEC }}"
 
 
 
